@@ -2,7 +2,7 @@
 #define CONSTANTES_H
 
 	// define game states
-	enum class GameState {REDPLAYS, BLUEPLAYS, REDWIN, BLUEWIN, DRAW};
+	enum class GameState {REDPLAYS, BLUEPLAYS, REDWIN, BLUEWIN};
 
 	// define quantities
 	#define QTE_BOMBE 6

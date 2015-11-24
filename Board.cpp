@@ -127,4 +127,35 @@ namespace Game {
 		}
 	}
 
+	bool Board::canPlayerPlay() const {
+
+		for(int i=0;i<10;i++){
+			for(int j=0;j<10;j++){
+				Piece* p = this->getPiece(Position(i,j));
+				if((p->getId()>0) && (p->getId()<11)) { // Unit
+					Unite* u = dynamic_cast<Unite*>(p);
+					if((u->getColor()) && (this->getState() == GameState::REDPLAYS)) { // Reds turn and Red unit
+						if(!u->moves(*this).empty()) {
+							return true;
+						}
+					}
+					else if((!u->getColor()) && (this->getState() == GameState::BLUEPLAYS)) { // Blues turn and blue unit
+						if(!u->moves(*this).empty()) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		if(this->getState() == GameState::REDPLAYS) {
+			this->state = GameState::BLUEWIN; // Reds can't make a moove => Blues win
+		}
+		else if(this->getState() == GameState::BLUEPLAYS) {
+			this->state = GameState::REDWIN; // Blues can't make a moove => Reds win
+		}
+
+		return false;
+	}
+
 }
