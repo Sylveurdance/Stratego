@@ -2,10 +2,11 @@
 
 namespace Game {
 
-	Piece::Piece(bool color, const Position& position) {
+	Piece::Piece(bool color, int id, const Position& position) {
 		this->color = color;
 		this->position = position;
-		this->id = -1;
+		this->id = id;
+		this->value = -1;
 		this->name = "";
 	}
 
@@ -19,6 +20,11 @@ namespace Game {
 	// Gets the piece ID
 	int Piece::getId() const {
 		return this->id;
+	}
+
+	// Gets the piece value
+	int Piece::getValue() const {
+		return this->value;
 	}
 
 	// Gets the piece name

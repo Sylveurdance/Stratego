@@ -2,8 +2,8 @@
 
 namespace Game {
 
-	Unite::Unite(bool col, const Position& position, int id, std::string name) : Piece(col, position) {
-		this->id = id;
+	Unite::Unite(bool col, const Position& position, int id, int value, std::string name) : Piece(col, id, position) {
+		this->value = value;
 		this->name = name;
 	}
 
@@ -15,8 +15,8 @@ namespace Game {
 		std::vector<Position> possibleMoves = new std::vector<Position>();
 
 		Position from = this->getPosition();
-		// Eclaireur case
-		if(this->getId()==2) {
+		// Scout case
+		if(this->getValue()==SCOUT) {
 			for(int i=1+from.x;i<10;i++) { // go right
 				if(board.isCorrectMove(from, Position(i, from.y))) {
 					possibleMoves.push_back(Position(i, from.y));

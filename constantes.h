@@ -5,18 +5,32 @@
 	enum class GameState {REDPLAYS, BLUEPLAYS, REDWIN, BLUEWIN};
 
 	// define quantities
-	#define QTE_BOMBE 6
-	#define QTE_ESPION 1
-	#define QTE_ECLAIREUR 8
-	#define QTE_DEMINEUR 5
-	#define QTE_SERGENT 4
+	#define QTE_BOMB 6
+	#define QTE_SPY 1
+	#define QTE_SCOUT 8
+	#define QTE_MINER 5
+	#define QTE_SERGEANT 4
 	#define QTE_LIEUTENANT 4
-	#define QTE_CAPITAINE 4
-	#define QTE_COMMANDANT 3
+	#define QTE_CAPTAIN 4
+	#define QTE_MAJOR 3
 	#define QTE_COLONEL 2
 	#define QTE_GENERAL 1
-	#define QTE_MARECHAL 1
-	#define QTE_DRAPEAU 1
+	#define QTE_MARSCHAL 1
+	#define QTE_FLAG 1
+
+	// define values
+	#define FLAG 0
+	#define BOMB 11
+	#define SPY 1
+	#define SCOUT 2
+	#define MINER 3
+	#define SERGEANT 4
+	#define LIEUTENANT 5
+	#define CAPTAIN 6
+	#define MAJOR 7
+	#define COLONEL 8
+	#define GENERAL 9
+	#define MARSCHAL 10
 
 	// define colors
 	#define RED true

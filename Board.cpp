@@ -64,7 +64,7 @@ namespace Game {
 	// Unit U attacks Piece P
 	bool Board::battle(Unite* u, Piece* p) {
 		bool win;
-		if(p->getId()==0) { // Flag
+		if(p->getValue()==FLAG) {
 			win = true;
 			if(this->getState() == GameState::BLUEPLAYS) {
 				this->state = GameState::BLUEWIN;
@@ -73,8 +73,8 @@ namespace Game {
 				this->state = GameState::REDWIN;
 			}
 		}
-		else if(p->getId()==11) { // Bomb
-			if(u->getId()==3) {
+		else if(p->getValue()==BOMB) {
+			if(u->getValue()==MINER) {
 				win = true;
 			}
 			else {
@@ -82,13 +82,13 @@ namespace Game {
 			}
 		}
 		else { // Another Unit
-			if((u->getId()==1) && (p->getId()==10)) { // the spy attacks the marechal
+			if((u->getValue()==SPY) && (p->getValue()==MARSCHAL)) { // the spy attacks the marschal
 				win = true;
 			}
-			else if(u->getId() > p->getId()) {
+			else if(u->getValue() > p->getValue()) {
 				win = true;
 			}
-			else if(u->getId() < p->getId()) {
+			else if(u->getValue() < p->getValue()) {
 				win = false;
 			}
 			else { // draw (both units are destroyed)
@@ -132,7 +132,7 @@ namespace Game {
 		for(int i=0;i<10;i++){
 			for(int j=0;j<10;j++){
 				Piece* p = this->getPiece(Position(i,j));
-				if((p->getId()>0) && (p->getId()<11)) { // Unit
+				if((p->getValue()!=FLAG) && (p->getValue()!=BOMB)) { // Unit
 					Unite* u = dynamic_cast<Unite*>(p);
 					if((u->getColor()) && (this->getState() == GameState::REDPLAYS)) { // Reds turn and Red unit
 						if(!u->moves(*this).empty()) {
