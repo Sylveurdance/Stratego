@@ -17,7 +17,8 @@ namespace Game {
 			Position position;
 
 		public:
-			Piece(bool color, int id, const Position& position);
+			Piece(bool color, int id, int value, std::string name);
+			Piece(bool color, int id, int value, std::string name, const Position& position);
 			virtual ~Piece();
 			bool getColor() const;
 			int getId() const;

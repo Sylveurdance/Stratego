@@ -2,12 +2,19 @@
 
 namespace Game {
 
-	Piece::Piece(bool color, int id, const Position& position) {
+	Piece::Piece(bool color, int id, int value, std::string name) {
+		this->color = color;
+		this->id = id;
+		this->value = value;
+		this->name = name;
+	}
+
+	Piece::Piece(bool color, int id, int value, std::string name, const Position& position) {
 		this->color = color;
 		this->position = position;
 		this->id = id;
-		this->value = -1;
-		this->name = "";
+		this->value = value;
+		this->name = name;
 	}
 
 	Piece::~Piece() {}

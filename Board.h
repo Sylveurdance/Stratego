@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "Piece.h"
+#include "Box.h"
 
 namespace Game {
 
@@ -9,6 +9,8 @@ namespace Game {
 		private:
 			GameState state; // Gives the game status (someone turn, or end of game?)
 			Piece* cases[10][10]; // Represents the field
+			Box* redBox;
+			Box* blueBox;
 		public:
 			Board();
 			~Board();

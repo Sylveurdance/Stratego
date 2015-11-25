@@ -2,10 +2,7 @@
 
 namespace Game {
 
-	Unite::Unite(bool col, const Position& position, int id, int value, std::string name) : Piece(col, id, position) {
-		this->value = value;
-		this->name = name;
-	}
+	Unite::Unite(bool col, const Position& position, int id, int value, std::string name) : Piece(col, id, value, name, position) {}
 
 	void Unite::move(const Position& newPosition) {
 		this->position = newPosition;

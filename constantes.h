@@ -15,7 +15,7 @@
 	#define QTE_MAJOR 3
 	#define QTE_COLONEL 2
 	#define QTE_GENERAL 1
-	#define QTE_MARSCHAL 1
+	#define QTE_MARSHAL 1
 	#define QTE_FLAG 1
 
 	// define values
@@ -30,7 +30,7 @@
 	#define MAJOR 7
 	#define COLONEL 8
 	#define GENERAL 9
-	#define MARSCHAL 10
+	#define MARSHAL 10
 
 	// define colors
 	#define RED true

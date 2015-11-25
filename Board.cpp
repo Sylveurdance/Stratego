@@ -9,7 +9,8 @@ namespace Game {
 				this->cases[j][i]=NULL;
 			}
 		}
-
+		this->redBox=new Box(RED);
+		this->blueBox=new Box(BLUE);
 	}
 
 	Board::~Board() {
@@ -19,6 +20,8 @@ namespace Game {
 			}
 		}
 		delete[] this->cases;
+		delete this->redBox;
+		delete this->blueBox;
 	}
 
 	GameState Board::getState() const {
@@ -52,11 +55,25 @@ namespace Game {
 	}
 
 	void Board::putPiece(Piece* p, const Position& position) {
+		if(p->getColor()) { // Red
+			this->redBox->takeOutOfBox(p->getId());
+		}
+		else { // Blue
+			this->blueBox->takeOutOfBox(p->getId());
+		}
+
 		this->cases[position.x][position.y] = p;
 		dynamic_cast<Unite*>(p)->move(position);
 	}
 
 	void Board::removePiece(const Position& position) {
+		if(this->getPiece(position)->getColor()) { // Red piece
+			this->redBox->putInBox(this->getPiece(position));
+		}
+		else { // Blue piece
+			this->blueBox->putInBox(this->getPiece(position));
+		}
+
 		delete this->getPiece(position);
 		this->cases[position.x][position.y] = NULL;
 	}
@@ -82,7 +99,7 @@ namespace Game {
 			}
 		}
 		else { // Another Unit
-			if((u->getValue()==SPY) && (p->getValue()==MARSCHAL)) { // the spy attacks the marschal
+			if((u->getValue()==SPY) && (p->getValue()==MARSHAL)) { // the spy attacks the marshal
 				win = true;
 			}
 			else if(u->getValue() > p->getValue()) {
