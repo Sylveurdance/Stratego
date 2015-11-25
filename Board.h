@@ -23,6 +23,7 @@ namespace Game {
 			bool battle(Unite* u, Piece* p); // Battle between Unit U and the enemy piece
 			void movePiece(const Position& from, const Position& to); // Moves a piece from a position to another and handles battle results eventually
 			bool canPlayerPlay() const; // Checks if the current player can make a move or not with at least one of its units
+			void fillBoard(bool color); // Fill (automatically) the board for a player (red or blue)
 
 	};
 

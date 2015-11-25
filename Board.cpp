@@ -33,7 +33,7 @@ namespace Game {
 	}
 
 	bool Board::isCaseFree(const Position& position) const {
-		if(getPiece(position)==NULL) {
+		if(this->getPiece(position)==NULL) {
 			return true;
 		}
 		return false;
@@ -43,11 +43,11 @@ namespace Game {
 		if(!to.isValid()) {
 			return false; // Checks if the position is not forbidden
 		}
-		if(isCaseFree(to)) {
+		if(this->isCaseFree(to)) {
 			return true; // Free case is always valid (if not forbidden)
 		}
 		else {
-			if(getPiece(from)->getColor() != getPiece(to)->getColor()) {
+			if(this->getPiece(from)->getColor() != this->getPiece(to)->getColor()) {
 				return true;
 			}
 			return false; // Case located by one of our own piece
@@ -149,16 +149,18 @@ namespace Game {
 		for(int i=0;i<10;i++){
 			for(int j=0;j<10;j++){
 				Piece* p = this->getPiece(Position(i,j));
-				if((p->getValue()!=FLAG) && (p->getValue()!=BOMB)) { // Unit
-					Unite* u = dynamic_cast<Unite*>(p);
-					if((u->getColor()) && (this->getState() == GameState::REDPLAYS)) { // Reds turn and Red unit
-						if(!u->moves(*this).empty()) {
-							return true;
+				if(!this->isCaseFree(Position(i,j))) {
+					if((p->getValue()!=FLAG) && (p->getValue()!=BOMB)) { // Unit
+						Unite* u = dynamic_cast<Unite*>(p);
+						if((u->getColor()) && (this->getState() == GameState::REDPLAYS)) { // Reds turn and Red unit
+							if(!u->moves(*this).empty()) {
+								return true;
+							}
 						}
-					}
-					else if((!u->getColor()) && (this->getState() == GameState::BLUEPLAYS)) { // Blues turn and blue unit
-						if(!u->moves(*this).empty()) {
-							return true;
+						else if((!u->getColor()) && (this->getState() == GameState::BLUEPLAYS)) { // Blues turn and blue unit
+							if(!u->moves(*this).empty()) {
+								return true;
+							}
 						}
 					}
 				}
@@ -173,6 +175,23 @@ namespace Game {
 		}
 
 		return false;
+	}
+
+	void Board::fillBoard(bool color) {
+		Box box;
+		if(color) {
+			box = this->redBox;
+		}
+		else {
+			box = this->blueBox;
+		}
+		int i = 0;
+		for(int y=0;y<5;y++){
+			for(int x=0;x<10;x++){
+				if(!color) y = 9-y;
+				this->putPiece(box.getBox()->at(i++), Position(x,y));
+			}
+		}
 	}
 
 }

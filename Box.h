@@ -14,6 +14,7 @@ namespace Game {
 			~Box(bool color);
 			void putInBox(Piece* p); // Put a defeated piece into the box
 			Piece* takeOutOfBox(int id); // Put a piece in the box on the field
+			std::vector<Piece*>* getBox();
 	};
 
 }

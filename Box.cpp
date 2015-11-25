@@ -79,4 +79,8 @@ namespace Game {
 		return NULL;
 	}
 
+	std::vector<Piece*>* Box::getBox() {
+		return this->pieces;
+	}
+
 }
