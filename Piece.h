@@ -1,7 +1,8 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-#include <constantes.h>
+#include "constantes.h"
+#include "Position.h"
 #include <vector>
 
 namespace Game {
@@ -25,6 +26,8 @@ namespace Game {
 			int getValue() const;
 			std::string getName() const;
 			Position getPosition() const;
+			bool isUnit() const;
+			void move(const Position& position); // only for Units
 
 	};
 }

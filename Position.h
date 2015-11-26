@@ -1,5 +1,5 @@
-#ifndef POSITION.H
-#define POSITION.H
+#ifndef POSITION_H
+#define POSITION_H
 
 namespace Game {
 	// A position on the board.
@@ -8,10 +8,8 @@ namespace Game {
 			int x;
 			int y;
 
-			// Create new position at 0, 0.
-			Position();
-
 			// Create new position (x, y)
+			Position();
 			Position(int x, int y);
 
 			// Check if position is within bounds.

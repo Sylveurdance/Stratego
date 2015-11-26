@@ -56,7 +56,7 @@ namespace Game {
 		}
 	}
 
-	Box::~Box(bool color) {
+	Box::~Box() {
 		for (int i=0;i<this->pieces->size();i++) {
 			delete this->pieces->at(i);
 		}

@@ -2,8 +2,7 @@
 #define GUI_H
 
 #include <SFML/Graphics.hpp>
-#include <Board.h>
-#include <Piece.h>
+#include "Board.h"
 #include <map>
 #include <ctype.h>
 

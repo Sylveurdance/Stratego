@@ -1,7 +1,5 @@
 #include "GUI.h"
-#include <Board.h>
-
-using namespace sf;
+#include "Board.h"
 
 int main() {
 	Game::Board board;

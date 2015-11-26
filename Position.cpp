@@ -1,7 +1,11 @@
 #include "Position.h"
 
 namespace Game {
-	Position::Position() : Position(0, 0) {}
+
+	Position::Position() {
+		this->x = 0;
+		this->y = 0;
+	}
 
 	Position::Position(int x, int y) {
 		this->x = x;

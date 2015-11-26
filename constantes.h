@@ -2,7 +2,7 @@
 #define CONSTANTES_H
 
 	// define game states
-	enum class GameState {REDPLAYS, BLUEPLAYS, REDWIN, BLUEWIN};
+	enum GameState {REDPLAYS, BLUEPLAYS, REDWIN, BLUEWIN};
 
 	// define quantities
 	#define QTE_BOMB 6
@@ -35,9 +35,6 @@
 	// define colors
 	#define RED true
 	#define BLUE false
-
-	#define RED_VALUE "rouge"
-	#define BLUE_VALUE "bleu"
 
 	#include <iostream>
 	#include <string>

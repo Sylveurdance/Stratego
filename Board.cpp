@@ -3,7 +3,7 @@
 namespace Game {
 
 	Board::Board() {
-		this->state = GameState::REDPLAYS; // Reds begin
+		this->state = REDPLAYS; // Reds begin
 		for(int i=0;i<10;i++){
 			for(int j=0;j<10;j++){
 				this->cases[j][i]=NULL;
@@ -19,7 +19,6 @@ namespace Game {
 				delete this->cases[j][i];
 			}
 		}
-		delete[] this->cases;
 		delete this->redBox;
 		delete this->blueBox;
 	}
@@ -40,8 +39,14 @@ namespace Game {
 	}
 
 	bool Board::isCorrectMove(const Position& from, const Position& to) const {
-		if(!to.isValid()) {
-			return false; // Checks if the position is not forbidden
+		if(this->getPiece(from)==NULL) {
+			return NULL; // error case
+		}
+		if((!from.isValid()) || (!to.isValid())) {
+			return false; // Checks if the positions are not forbidden
+		}
+		if(!this->getPiece(from)->isUnit()) {
+			return false; // If the piece in from position is not a unit, the move is not correct
 		}
 		if(this->isCaseFree(to)) {
 			return true; // Free case is always valid (if not forbidden)
@@ -55,6 +60,7 @@ namespace Game {
 	}
 
 	void Board::putPiece(Piece* p, const Position& position) {
+		if(p==NULL) { return; } // protect from errors
 		if(p->getColor()) { // Red
 			this->redBox->takeOutOfBox(p->getId());
 		}
@@ -63,10 +69,11 @@ namespace Game {
 		}
 
 		this->cases[position.x][position.y] = p;
-		dynamic_cast<Unite*>(p)->move(position);
+		p->move(position);
 	}
 
 	void Board::removePiece(const Position& position) {
+		if(this->getPiece(position)==NULL) { return; } // protect from errors
 		if(this->getPiece(position)->getColor()) { // Red piece
 			this->redBox->putInBox(this->getPiece(position));
 		}
@@ -79,15 +86,19 @@ namespace Game {
 	}
 
 	// Unit U attacks Piece P
-	bool Board::battle(Unite* u, Piece* p) {
+	bool Board::battle(Piece* u, Piece* p) {
+		if((u == NULL) || (p == NULL) || (!u->isUnit())) {
+			return NULL; // Pieces NULL value or U not a Unit...
+		}
+
 		bool win;
 		if(p->getValue()==FLAG) {
 			win = true;
-			if(this->getState() == GameState::BLUEPLAYS) {
-				this->state = GameState::BLUEWIN;
+			if(this->getState() == BLUEPLAYS) {
+				this->state = BLUEWIN;
 			}
-			else if(this->getState() == GameState::REDPLAYS) {
-				this->state = GameState::REDWIN;
+			else if(this->getState() == REDPLAYS) {
+				this->state = REDWIN;
 			}
 		}
 		else if(p->getValue()==BOMB) {
@@ -124,24 +135,93 @@ namespace Game {
 				this->putPiece(tmp, to);
 			}
 			else { // battle
-				if(battle(dynamic_cast<Unite*>(this->getPiece(from)),this->getPiece(to))) {
-					Piece* tmp = this->getPiece(from);
-					this->removePiece(from);
-					this->removePiece(to);
-					this->putPiece(tmp, to);
-				}
-				else {
-					this->removePiece(from);
+				bool battleRes = battle(this->getPiece(from),this->getPiece(to));
+				if(battleRes!=NULL) {
+					if(battleRes) {
+						Piece* tmp = this->getPiece(from);
+						this->removePiece(from);
+						this->removePiece(to);
+						this->putPiece(tmp, to);
+					}
+					else {
+						this->removePiece(from);
+					}
 				}
 			}
 			// Change turn
-			if(this->getState() == GameState::BLUEPLAYS) {
-				this->state = GameState::REDPLAYS;
+			if(this->getState() == BLUEPLAYS) {
+				this->state = REDPLAYS;
 			}
-			else if(this->getState() == GameState::REDPLAYS) {
-				this->state = GameState::BLUEPLAYS;
+			else if(this->getState() == REDPLAYS) {
+				this->state = BLUEPLAYS;
 			}
 		}
+	}
+
+	std::vector<Position> Board::moves(const Position& position) const {
+		std::vector<Position> possibleMoves;
+
+		Piece* p = this->getPiece(position);
+		if ((p == NULL) || (!p->isUnit())) {
+			return NULL; // case empty or not a Unit (cannot move)
+		}
+
+		Position from = p->getPosition();
+		// Scout case
+		if(p->getValue()==SCOUT) {
+			for(int i=1+from.x;i<10;i++) { // go right
+				if(this->isCorrectMove(from, Position(i, from.y))) {
+					possibleMoves.push_back(Position(i, from.y));
+				}
+				else {
+					break;
+				}
+			}
+			for(int i=from.x-1;i>=0;i--) { // go left
+				if(this->isCorrectMove(from, Position(i, from.y))) {
+					possibleMoves.push_back(Position(i, from.y));
+				}
+				else {
+					break;
+				}
+			}
+			for(int i=1+from.y;i<10;i++) { // go up
+				if(this->isCorrectMove(from, Position(from.x, i))) {
+					possibleMoves.push_back(Position(from.x, i));
+				}
+				else {
+					break;
+				}
+			}
+			for(int i=from.y-1;i>=0;i--) { // go down
+				if(this->isCorrectMove(from, Position(from.x, i))) {
+					possibleMoves.push_back(Position(from.x, i));
+				}
+				else {
+					break;
+				}
+			}
+		}
+		else { // normal case
+			Position toRight = Position(1+from.x, from.y);
+			if(this->isCorrectMove(from, toRight)) {
+				possibleMoves.push_back(toRight);
+			}
+			Position toLeft = Position(from.x-1, from.y);
+			if(this->isCorrectMove(from, toLeft)) {
+				possibleMoves.push_back(toLeft);
+			}
+			Position toUp = Position(from.x, 1+from.y);
+			if(this->isCorrectMove(from, toUp)) {
+				possibleMoves.push_back(toUp);
+			}
+			Position toDown = Position(from.x, from.y-1);
+			if(this->isCorrectMove(from, toDown)) {
+				possibleMoves.push_back(toDown);
+			}
+		}
+
+		return possibleMoves;
 	}
 
 	bool Board::canPlayerPlay() const {
@@ -149,16 +229,15 @@ namespace Game {
 		for(int i=0;i<10;i++){
 			for(int j=0;j<10;j++){
 				Piece* p = this->getPiece(Position(i,j));
-				if(!this->isCaseFree(Position(i,j))) {
-					if((p->getValue()!=FLAG) && (p->getValue()!=BOMB)) { // Unit
-						Unite* u = dynamic_cast<Unite*>(p);
-						if((u->getColor()) && (this->getState() == GameState::REDPLAYS)) { // Reds turn and Red unit
-							if(!u->moves(*this).empty()) {
+				if(!this->isCaseFree(Position(i,j))) { // prevent null values
+					if(p->isUnit()) { // Unit
+						if((p->getColor()) && (this->getState() == REDPLAYS)) { // Reds turn and Red unit
+							if((this->moves(Position(i,j))!=NULL) && (!this->moves(Position(i,j)).empty())) {
 								return true;
 							}
 						}
-						else if((!u->getColor()) && (this->getState() == GameState::BLUEPLAYS)) { // Blues turn and blue unit
-							if(!u->moves(*this).empty()) {
+						else if((!p->getColor()) && (this->getState() == BLUEPLAYS)) { // Blues turn and blue unit
+							if((this->moves(Position(i,j))!=NULL) && (!this->moves(Position(i,j)).empty())) {
 								return true;
 							}
 						}
@@ -167,11 +246,11 @@ namespace Game {
 			}
 		}
 
-		if(this->getState() == GameState::REDPLAYS) {
-			this->state = GameState::BLUEWIN; // Reds can't make a moove => Blues win
+		if(this->getState() == REDPLAYS) {
+			this->state = BLUEWIN; // Reds can't make a moove => Blues win
 		}
-		else if(this->getState() == GameState::BLUEPLAYS) {
-			this->state = GameState::REDWIN; // Blues can't make a moove => Reds win
+		else if(this->getState() == BLUEPLAYS) {
+			this->state = REDWIN; // Blues can't make a moove => Reds win
 		}
 
 		return false;

@@ -7,6 +7,7 @@ namespace Game {
 		this->id = id;
 		this->value = value;
 		this->name = name;
+		this->position = Position(0,0);
 	}
 
 	Piece::Piece(bool color, int id, int value, std::string name, const Position& position) {
@@ -42,6 +43,21 @@ namespace Game {
 	// Gets the current piece position on the field
 	Position Piece::getPosition() const {
 			return this->position;
+	}
+
+	// Checks if the piece is a Unit or not
+	bool Piece::isUnit() const {
+		if((this->value != FLAG) && (this->value!=BOMB)) {
+			return true;
+		}
+		return false;
+	}
+
+	// Moves a piece (Unit) to another position
+	void Piece::move(const Position& newPosition) {
+		if(this->isUnit()) {
+			this->position = newPosition;
+		}
 	}
 
 }

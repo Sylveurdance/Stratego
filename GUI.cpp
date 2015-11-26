@@ -79,35 +79,30 @@ namespace GUI {
 			Position tempPos(mousePos.x * 10 / width, mousePos.y * 10 / height);
 			tempPos.y = 9 - tempPos.y; // SFML reverse repere in Y
 			Piece* tempPiece = board.getPiece(tempPos);
-			if((tempPiece->getValue()!=FLAG) && (tempPiece->getValue()!=BOMB)) {
-				Unite* tempUnit = dynamic_cast<Unite*>(tempPiece);
-				if (selected) { // If we have already selected a piece, and click on the board again, the piece should move.
-					Piece* selectedPiece = board.getPiece(selection);
-					if((selectedPiece->getValue()!=FLAG) && (selectedPiece->getValue()!=BOMB)) { // Unit
-						if(board.isCorrectMove(selection, tempPos)) {
-							board.movePiece(selection, tempPos);
-							selected = false;
-						}
-						else if (tempPiece != nullptr) { // Prevent selecting of opponent pieces.
-							if (!tempPiece->getColor() && (board.getState() == GameState::REDPLAYS))
-								return;
-							else if (tempPiece->getColor() && (board.getState() == GameState::BLUEPLAYS))
-								return;
-							selection = tempPos;
-							selected = true;
-							highlights = tempUnit->moves(board);
-						}
-					}
+			if (selected) { // If we have already selected a piece, and click on the board again, the piece should move.
+				Piece* selectedPiece = board.getPiece(selection);
+				if(board.isCorrectMove(selection, tempPos)) {
+					board.movePiece(selection, tempPos);
+					selected = false;
 				}
-				else if (tempPiece != nullptr) { // If we haven't already selected a piece, then we should select it.
+				else if (tempPiece != nullptr) { // Prevent selecting of opponent pieces.
 					if (!tempPiece->getColor() && (board.getState() == GameState::REDPLAYS))
 						return;
 					else if (tempPiece->getColor() && (board.getState() == GameState::BLUEPLAYS))
 						return;
 					selection = tempPos;
 					selected = true;
-					highlights = tempUnit->moves(board);
+					highlights = board.moves(tempPos);
 				}
+			}
+			else if (tempPiece != nullptr) { // If we haven't already selected a piece, then we should select it.
+				if (!tempPiece->getColor() && (board.getState() == GameState::REDPLAYS))
+					return;
+				else if (tempPiece->getColor() && (board.getState() == GameState::BLUEPLAYS))
+					return;
+				selection = tempPos;
+				selected = true;
+				highlights = board.moves(tempPos);
 			}
 		}
 
