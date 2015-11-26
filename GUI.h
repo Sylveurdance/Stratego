@@ -3,8 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "Board.h"
-#include <map>
-#include <ctype.h>
 
 namespace GUI {
 
@@ -17,9 +15,13 @@ namespace GUI {
 			sf::Font messageFont;
 			sf::Text messageText;
 
+			// Textures
 			std::vector<sf::Texture> piecesTexture;
+			sf::Texture fieldT;
+			sf::Texture piece_rougeT;
+			sf::Texture piece_bleuT;
+			// Sprites
 			std::vector<sf::Sprite> piecesSprite;
-
 			sf::Sprite field;
 			sf::Sprite piece_rouge;
 			sf::Sprite piece_bleu;
@@ -34,7 +36,6 @@ namespace GUI {
 			void drawPieces();											//Draws the pieces on top of the board.
 			void updateGame();											//Updates the game
 			void drawMessage();											//Draws a message (win, lose)
-			void updateMessage();										//Updates the message (Does nothing right now)
 			bool highlighted(const Game::Position& position);			//Returns whether a position is highlighted
 
 		public:

@@ -3,7 +3,6 @@
 
 #include "constantes.h"
 #include "Position.h"
-#include <vector>
 
 namespace Game {
 	class Piece {

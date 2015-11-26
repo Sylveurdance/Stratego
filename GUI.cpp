@@ -5,7 +5,7 @@ using namespace Game;
 
 namespace GUI {
 
-	GUI::GUI(int width, int height, Board& board) {
+	GUI::GUI(int width, int height, Board& board) : board(board) {
 		this->width = width;
 		this->height = height;
 		this->board = board;
@@ -21,33 +21,32 @@ namespace GUI {
 		messageText.setCharacterSize(height / 4);
 		messageText.setColor(Color::White);
 
-		Texture fieldT;
-		fieldT.loadFromFile("./img/plateau.png");
-		field.setTexture(fieldT);
-		field.setColor(Color(255, 255, 255, 128));
+		// Field
+		if(fieldT.loadFromFile("./img/plateau.png")) {
+			field.setTexture(fieldT);
+		}
 
-		piece_rouge.setTexture(Texture("./img/piece.png"));
-		piece_bleu.setTexture(Texture("./img/piece2.png"));
+		// Pieces Red and blues
+		if(piece_rougeT.loadFromFile("./img/piece.png")) piece_rouge.setTexture(piece_rougeT);
+		if(piece_bleuT.loadFromFile("./img/piece2.png")) piece_bleu.setTexture(piece_bleuT);
 
-		piecesTexture = new std::vector<Texture>();
-		piecesTexture.push_back(Texture("./img/drapeau.png"));
-		piecesTexture.push_back(Texture("./img/1-espion.png"));
-		piecesTexture.push_back(Texture("./img/2-eclaireur.png"));
-		piecesTexture.push_back(Texture("./img/3-demineur.png"));
-		piecesTexture.push_back(Texture("./img/4-sergent.png"));
-		piecesTexture.push_back(Texture("./img/5-lieutenant.png"));
-		piecesTexture.push_back(Texture("./img/6-capitaine.png"));
-		piecesTexture.push_back(Texture("./img/7-commandant.png"));
-		piecesTexture.push_back(Texture("./img/8-colonel.png"));
-		piecesTexture.push_back(Texture("./img/9-general.png"));
-		piecesTexture.push_back(Texture("./img/10-marechal.png"));
-		piecesTexture.push_back(Texture("./img/bombe.png"));
-
-		piecesSprite = new std::vector<Sprite>();
-		for(int i=0;piecesTexture.size();i++) {
+		// Pieces images
+		for(int i=0;i<12;i++) {
+			Texture tmpT;
 			Sprite tmpSprite;
-			tmpSprite.setTexture(piecesTexture.at(i));
-			piecesSprite.push_back(tmpSprite);
+			std::stringstream sstm;
+			std::string fileName;
+			sstm << "./img/" << i << ".png";
+			fileName = sstm.str();
+
+			if(tmpT.loadFromFile(fileName)) {
+				piecesTexture.push_back(tmpT);
+				tmpSprite.setTexture(piecesTexture.at(i));
+				piecesSprite.push_back(tmpSprite);
+			}
+			else {
+				i--; // will retry ! (possibly infinite loop!!!!)
+			}
 		}
 	}
 
@@ -66,8 +65,7 @@ namespace GUI {
 				window->close();
 		}
 
-		updateMessage();
-		if ((board.getState() == GameState::REDPLAYS || board.getState() == GameState::BLUEPLAYS)) {
+		if ((board.getState() == REDPLAYS || board.getState() == BLUEPLAYS)) {
 			updateGame();
 		}
 	}
@@ -85,20 +83,20 @@ namespace GUI {
 					board.movePiece(selection, tempPos);
 					selected = false;
 				}
-				else if (tempPiece != nullptr) { // Prevent selecting of opponent pieces.
-					if (!tempPiece->getColor() && (board.getState() == GameState::REDPLAYS))
+				else if (tempPiece) { // Prevent selecting of opponent pieces.
+					if (!tempPiece->getColor() && (board.getState() == REDPLAYS))
 						return;
-					else if (tempPiece->getColor() && (board.getState() == GameState::BLUEPLAYS))
+					else if (tempPiece->getColor() && (board.getState() == BLUEPLAYS))
 						return;
 					selection = tempPos;
 					selected = true;
 					highlights = board.moves(tempPos);
 				}
 			}
-			else if (tempPiece != nullptr) { // If we haven't already selected a piece, then we should select it.
-				if (!tempPiece->getColor() && (board.getState() == GameState::REDPLAYS))
+			else if (tempPiece) { // If we haven't already selected a piece, then we should select it.
+				if (!tempPiece->getColor() && (board.getState() == REDPLAYS))
 					return;
-				else if (tempPiece->getColor() && (board.getState() == GameState::BLUEPLAYS))
+				else if (tempPiece->getColor() && (board.getState() == BLUEPLAYS))
 					return;
 				selection = tempPos;
 				selected = true;
@@ -113,21 +111,17 @@ namespace GUI {
 		messageText.setPosition(Vector2f(width/3.0f,height/3.0f));
 		messageText.setCharacterSize(25);
 		board.canPlayerPlay();
-		if (board.getState() == GameState::REDWIN)
+		if (board.getState() == REDWIN)
 			messageText.setString("Red wins!");
-		else if (board.getState() == GameState::BLUEWIN)
+		else if (board.getState() == BLUEWIN)
 			messageText.setString("Blue wins!");
 		window->draw(messageText);
 	}
 
-	void GUI::updateMessage(){
-		return;
-	}
-
 	void GUI::render() {
 		window->clear();
-		drawMessage();
-		if ((board.getState() == GameState::REDPLAYS || board.getState() == GameState::BLUEPLAYS)) {
+		//drawMessage();
+		if ((board.getState() == REDPLAYS || board.getState() == BLUEPLAYS)) {
 			drawBoard();
 			drawPieces();
 		}
@@ -138,9 +132,6 @@ namespace GUI {
 
 		window->draw(field);
 
-		Color brightSquare(224, 217, 190);
-		Color darkSquare(152, 145, 135);
-
 		RectangleShape square(Vector2f(width / 10.f, height / 10.f));
 		for (int x=0;x<10;x++) {
 			for (int y=0;y<10;y++) {
@@ -150,10 +141,6 @@ namespace GUI {
 					square.setFillColor(Color::Yellow);
 				else if (selected && highlighted(Position(x, 9-y)))
 					square.setFillColor(Color::Green);
-				else if ((x+y)%2 == 0)
-					square.setFillColor(brightSquare);
-				else
-					square.setFillColor(darkSquare);
 
 				window->draw(square);
 			}
@@ -164,7 +151,7 @@ namespace GUI {
 		for (int x=0;x<10;x++) {
 			for (int y=0;y<10;y++) {
 				Piece* piece = board.getPiece(Position(x,9-y));
-				if (piece != nullptr) {
+				if (piece) {
 					piecesSprite.at(piece->getValue()).setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
 					if(piece->getColor()) {
 						piece_rouge.setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
@@ -182,8 +169,8 @@ namespace GUI {
 	}
 
 	bool GUI::highlighted(const Position& position) {
-		for (Position move : highlights) {
-			if (move == position)
+		for(int i=0; i<highlights.size();i++) {
+			if (highlights.at(i) == position)
 				return true;
 		}
 

@@ -40,5 +40,9 @@
 	#include <string>
 	#include <cstddef>
 	#include <cstdlib>
+	#include <map>
+	#include <ctype.h>
+	#include <sstream>
+	#include <vector>
 
 #endif

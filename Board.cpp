@@ -9,8 +9,8 @@ namespace Game {
 				this->cases[j][i]=NULL;
 			}
 		}
-		this->redBox=new Box(RED);
-		this->blueBox=new Box(BLUE);
+		this->redBox = new Box(RED);
+		this->blueBox = new Box(BLUE);
 	}
 
 	Board::~Board() {
@@ -32,15 +32,15 @@ namespace Game {
 	}
 
 	bool Board::isCaseFree(const Position& position) const {
-		if(this->getPiece(position)==NULL) {
+		if(!this->getPiece(position)) {
 			return true;
 		}
 		return false;
 	}
 
 	bool Board::isCorrectMove(const Position& from, const Position& to) const {
-		if(this->getPiece(from)==NULL) {
-			return NULL; // error case
+		if(!this->getPiece(from)) {
+			return false; // error case
 		}
 		if((!from.isValid()) || (!to.isValid())) {
 			return false; // Checks if the positions are not forbidden
@@ -60,7 +60,7 @@ namespace Game {
 	}
 
 	void Board::putPiece(Piece* p, const Position& position) {
-		if(p==NULL) { return; } // protect from errors
+		if(!p) { return; } // protect from errors
 		if(p->getColor()) { // Red
 			this->redBox->takeOutOfBox(p->getId());
 		}
@@ -73,7 +73,7 @@ namespace Game {
 	}
 
 	void Board::removePiece(const Position& position) {
-		if(this->getPiece(position)==NULL) { return; } // protect from errors
+		if(this->getPiece(position)) { return; } // protect from errors
 		if(this->getPiece(position)->getColor()) { // Red piece
 			this->redBox->putInBox(this->getPiece(position));
 		}
@@ -87,7 +87,7 @@ namespace Game {
 
 	// Unit U attacks Piece P
 	bool Board::battle(Piece* u, Piece* p) {
-		if((u == NULL) || (p == NULL) || (!u->isUnit())) {
+		if((!p) || (!p) || (!u->isUnit())) {
 			return NULL; // Pieces NULL value or U not a Unit...
 		}
 
@@ -136,16 +136,14 @@ namespace Game {
 			}
 			else { // battle
 				bool battleRes = battle(this->getPiece(from),this->getPiece(to));
-				if(battleRes!=NULL) {
-					if(battleRes) {
-						Piece* tmp = this->getPiece(from);
-						this->removePiece(from);
-						this->removePiece(to);
-						this->putPiece(tmp, to);
-					}
-					else {
-						this->removePiece(from);
-					}
+				if(battleRes) {
+					Piece* tmp = this->getPiece(from);
+					this->removePiece(from);
+					this->removePiece(to);
+					this->putPiece(tmp, to);
+				}
+				else {
+					this->removePiece(from);
 				}
 			}
 			// Change turn
@@ -162,8 +160,8 @@ namespace Game {
 		std::vector<Position> possibleMoves;
 
 		Piece* p = this->getPiece(position);
-		if ((p == NULL) || (!p->isUnit())) {
-			return NULL; // case empty or not a Unit (cannot move)
+		if ((!p) || (!p->isUnit())) {
+			return possibleMoves; // case empty or not a Unit (cannot move)
 		}
 
 		Position from = p->getPosition();
@@ -224,7 +222,7 @@ namespace Game {
 		return possibleMoves;
 	}
 
-	bool Board::canPlayerPlay() const {
+	bool Board::canPlayerPlay() {
 
 		for(int i=0;i<10;i++){
 			for(int j=0;j<10;j++){
@@ -232,12 +230,12 @@ namespace Game {
 				if(!this->isCaseFree(Position(i,j))) { // prevent null values
 					if(p->isUnit()) { // Unit
 						if((p->getColor()) && (this->getState() == REDPLAYS)) { // Reds turn and Red unit
-							if((this->moves(Position(i,j))!=NULL) && (!this->moves(Position(i,j)).empty())) {
+							if(!this->moves(Position(i,j)).empty()) {
 								return true;
 							}
 						}
 						else if((!p->getColor()) && (this->getState() == BLUEPLAYS)) { // Blues turn and blue unit
-							if((this->moves(Position(i,j))!=NULL) && (!this->moves(Position(i,j)).empty())) {
+							if(!this->moves(Position(i,j)).empty()) {
 								return true;
 							}
 						}
@@ -257,18 +255,20 @@ namespace Game {
 	}
 
 	void Board::fillBoard(bool color) {
-		Box box;
-		if(color) {
-			box = this->redBox;
-		}
-		else {
-			box = this->blueBox;
-		}
-		int i = 0;
+
 		for(int y=0;y<5;y++){
 			for(int x=0;x<10;x++){
-				if(!color) y = 9-y;
-				this->putPiece(box.getBox()->at(i++), Position(x,y));
+				if(!color) {
+					y = 9-y;
+					if((!this->blueBox->getBox()->empty()) && (this->blueBox->getBox()->size()>0)){
+						this->putPiece(this->blueBox->getBox()->at(0), Position(x,y));
+					}
+				}
+				else {
+					if((!this->redBox->getBox()->empty()) && (this->redBox->getBox()->size()>0)){
+						this->putPiece(this->redBox->getBox()->at(0), Position(x,y));
+					}
+				}
 			}
 		}
 	}

@@ -69,11 +69,13 @@ namespace Game {
 	}
 
 	Piece* Box::takeOutOfBox(int id) {
-		for (int i=0;i<this->pieces->size();i++) {
-			if(this->pieces->at(i)->getId() == id) {
-				Piece* p = this->pieces->at(i);
-				this->pieces->erase(this->pieces->begin()+i);
-				return p;
+		if(!this->pieces->empty()) {
+			for (int i=0;i<this->pieces->size();i++) {
+				if(this->pieces->at(i)->getId() == id) {
+					Piece* p = this->pieces->at(i);
+					this->pieces->erase(this->pieces->begin()+i);
+					return p;
+				}
 			}
 		}
 		return NULL;
