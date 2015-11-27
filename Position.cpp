@@ -13,14 +13,16 @@ namespace Game {
 	}
 
 	bool Position::isValid() const {
-		bool result = (x >= 0 && x < 10 && y >= 0 && y < 10);
-		if (!result) {
+
+		if (!(x >= 0 && x < 10 && y >= 0 && y < 10)) { // Checks if Position in the zone
 			return false;
 		}
 		else {
-			result = ((y == 4 || y == 5) && (x!=2 && x!=3 && x!=6 && x!=7));
+			if(((y==4) || (y==5)) && ((x==2) || (x==3) || (x==6) || (x==7))) { // Checks if the position is not forbidden
+				return false;
+			}
 		}
-		return result;
+		return true;
 	}
 
 	bool operator==(const Position& lhs, const Position& rhs) {

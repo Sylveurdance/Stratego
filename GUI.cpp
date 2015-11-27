@@ -114,7 +114,7 @@ namespace GUI {
 	void GUI::drawMessage(){
 		messageText.setPosition(Vector2f(width/3.0f,height/3.0f));
 		messageText.setCharacterSize(25);
-		//board.canPlayerPlay();
+		board.canPlayerPlay();
 		if (board.getState() == REDWIN)
 			messageText.setString("Red wins!");
 		else if (board.getState() == BLUEWIN)

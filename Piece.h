@@ -1,7 +1,6 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-#include "constantes.h"
 #include "Position.h"
 
 namespace Game {

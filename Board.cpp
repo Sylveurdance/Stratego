@@ -165,6 +165,7 @@ namespace Game {
 		}
 
 		Position from = p->getPosition();
+
 		// Scout case
 		if(p->getValue()==SCOUT) {
 			for(int i=1+from.x;i<10;i++) { // go right
