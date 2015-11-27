@@ -16,7 +16,7 @@ namespace GUI {
 			sf::Text messageText;
 
 			// Textures
-			std::vector<sf::Texture> piecesTexture;
+			std::vector<sf::Texture*> piecesTexture;
 			sf::Texture fieldT;
 			sf::Texture piece_rougeT;
 			sf::Texture piece_bleuT;

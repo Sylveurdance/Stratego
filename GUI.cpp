@@ -32,16 +32,16 @@ namespace GUI {
 
 		// Pieces images
 		for(int i=0;i<12;i++) {
-			Texture tmpT;
+			Texture* tmpT = new Texture();
 			Sprite tmpSprite;
 			std::stringstream sstm;
 			std::string fileName;
 			sstm << "./img/" << i << ".png";
 			fileName = sstm.str();
 
-			if(tmpT.loadFromFile(fileName)) {
+			if(tmpT->loadFromFile(fileName)) {
 				piecesTexture.push_back(tmpT);
-				tmpSprite.setTexture(piecesTexture.at(i));
+				tmpSprite.setTexture(*piecesTexture.at(i));
 				piecesSprite.push_back(tmpSprite);
 			}
 			else {
@@ -51,6 +51,10 @@ namespace GUI {
 	}
 
 	GUI::~GUI() {
+		for(int i=0;i<12;i++) {
+			delete this->piecesTexture.at(i);
+		}
+		this->piecesTexture.clear();
 		delete window;
 	}
 
@@ -110,7 +114,7 @@ namespace GUI {
 	void GUI::drawMessage(){
 		messageText.setPosition(Vector2f(width/3.0f,height/3.0f));
 		messageText.setCharacterSize(25);
-		board.canPlayerPlay();
+		//board.canPlayerPlay();
 		if (board.getState() == REDWIN)
 			messageText.setString("Red wins!");
 		else if (board.getState() == BLUEWIN)
@@ -120,7 +124,7 @@ namespace GUI {
 
 	void GUI::render() {
 		window->clear();
-		//drawMessage();
+		drawMessage();
 		if ((board.getState() == REDPLAYS || board.getState() == BLUEPLAYS)) {
 			drawBoard();
 			drawPieces();
@@ -133,6 +137,7 @@ namespace GUI {
 		window->draw(field);
 
 		RectangleShape square(Vector2f(width / 10.f, height / 10.f));
+		square.setFillColor(Color(255, 255, 255, 50));
 		for (int x=0;x<10;x++) {
 			for (int y=0;y<10;y++) {
 				square.setPosition(x * width / 10.f, y * height / 10.f);
@@ -156,13 +161,17 @@ namespace GUI {
 					if(piece->getColor()) {
 						piece_rouge.setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
 						window->draw(piece_rouge);
+						if (board.getState() == REDPLAYS) {
+							window->draw(piecesSprite.at(piece->getValue()));
+						}
 					}
 					else {
 						piece_bleu.setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
 						window->draw(piece_bleu);
+						if (board.getState() == BLUEPLAYS) {
+							window->draw(piecesSprite.at(piece->getValue()));
+						}
 					}
-
-					window->draw(piecesSprite.at(piece->getValue()));
 				}
 			}
 		}

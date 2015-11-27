@@ -256,12 +256,13 @@ namespace Game {
 
 	void Board::fillBoard(bool color) {
 
+		int yy;
 		for(int y=0;y<5;y++){
+			if(!color) { yy = 9-y; }
 			for(int x=0;x<10;x++){
 				if(!color) {
-					y = 9-y;
 					if((!this->blueBox->getBox()->empty()) && (this->blueBox->getBox()->size()>0)){
-						this->putPiece(this->blueBox->getBox()->at(0), Position(x,y));
+						this->putPiece(this->blueBox->getBox()->at(0), Position(x,yy));
 					}
 				}
 				else {

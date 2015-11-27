@@ -14,14 +14,5 @@ stratego: Position.o Piece.o Box.o Board.o GUI.o main.o
 	$(CXX) -o stratego Position.o Piece.o Box.o Board.o GUI.o main.o $(LIBS)
 
 clean:
-	@echo "** Removing object files..."
-	rm -f *.o
-
-install:
-	@echo '** Installing...'
-	cp stratego /usr/bin/
-
-uninstall:
-	@echo '** Uninstalling...'
-	$(RM) /usr/bin/stratego
-
+	@echo "** Removing object files et executable..."
+	rm -f stratego *.o
