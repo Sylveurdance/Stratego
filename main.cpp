@@ -1,9 +1,12 @@
 #include "GUI.h"
 #include "Board.h"
 
+using namespace std;
+using namespace Game;
+
 int main() {
 
-	Game::Board board = Game::Board();
+	Board board = Board();
 	board.fillBoard(RED);
 	board.fillBoard(BLUE);
 

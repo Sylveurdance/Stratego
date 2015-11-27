@@ -59,29 +59,32 @@ namespace Game {
 		}
 	}
 
-	void Board::putPiece(Piece* p, const Position& position) {
+	void Board::putPiece(Piece* p, const Position& position, bool outBox) {
 		if(!p) { return; } // protect from errors
-		if(p->getColor()) { // Red
-			this->redBox->takeOutOfBox(p->getId());
-		}
-		else { // Blue
-			this->blueBox->takeOutOfBox(p->getId());
+		if(outBox) {
+			if(p->getColor()) { // Red
+				this->redBox->takeOutOfBox(p->getId());
+			}
+			else { // Blue
+				this->blueBox->takeOutOfBox(p->getId());
+			}
 		}
 
 		this->cases[position.x][position.y] = p;
 		p->move(position);
 	}
 
-	void Board::removePiece(const Position& position) {
-		if(this->getPiece(position)) { return; } // protect from errors
-		if(this->getPiece(position)->getColor()) { // Red piece
-			this->redBox->putInBox(this->getPiece(position));
-		}
-		else { // Blue piece
-			this->blueBox->putInBox(this->getPiece(position));
+	void Board::removePiece(const Position& position, bool boxIn) {
+		if(!this->getPiece(position)) { return; } // protect from errors
+		if(boxIn) {
+			if(this->getPiece(position)->getColor()) { // Red piece
+				this->redBox->putInBox(this->getPiece(position));
+			}
+			else { // Blue piece
+				this->blueBox->putInBox(this->getPiece(position));
+			}
 		}
 
-		delete this->getPiece(position);
 		this->cases[position.x][position.y] = NULL;
 	}
 
@@ -121,7 +124,7 @@ namespace Game {
 			}
 			else { // draw (both units are destroyed)
 				win = false;
-				this->removePiece(p->getPosition());
+				this->removePiece(p->getPosition(), true); // piece eliminated
 			}
 		}
 		return win;
@@ -130,20 +133,18 @@ namespace Game {
 	void Board::movePiece(const Position& from, const Position& to) {
 		if(isCorrectMove(from, to)) {
 			if(isCaseFree(to)) {
-				Piece* tmp = this->getPiece(from);
+				this->putPiece(this->getPiece(from), to);
 				this->removePiece(from);
-				this->putPiece(tmp, to);
 			}
 			else { // battle
 				bool battleRes = battle(this->getPiece(from),this->getPiece(to));
 				if(battleRes) {
-					Piece* tmp = this->getPiece(from);
+					this->removePiece(to, true); // piece eliminated
+					this->putPiece(this->getPiece(from), to);
 					this->removePiece(from);
-					this->removePiece(to);
-					this->putPiece(tmp, to);
 				}
 				else {
-					this->removePiece(from);
+					this->removePiece(from, true); // piece eliminated
 				}
 			}
 			// Change turn
@@ -263,12 +264,12 @@ namespace Game {
 			for(int x=0;x<10;x++){
 				if(!color) {
 					if((!this->blueBox->getBox()->empty()) && (this->blueBox->getBox()->size()>0)){
-						this->putPiece(this->blueBox->getBox()->at(0), Position(x,yy));
+						this->putPiece(this->blueBox->getBox()->at(0), Position(x,yy),true);
 					}
 				}
 				else {
 					if((!this->redBox->getBox()->empty()) && (this->redBox->getBox()->size()>0)){
-						this->putPiece(this->redBox->getBox()->at(0), Position(x,y));
+						this->putPiece(this->redBox->getBox()->at(0), Position(x,y),true);
 					}
 				}
 			}
