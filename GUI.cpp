@@ -129,7 +129,7 @@ namespace GUI {
 			for (int y=0;y<10;y++) {
 				square.setPosition(x * width / 10.f, y * height / 10.f);
 
-				if (selected && selection == Position(x, 9-y))
+				if(selected && selection == Position(x, 9-y))
 					square.setFillColor(Color::Yellow);
 				else if (selected && this->board.isInMoveset(highlights, Position(x, 9-y)))
 					square.setFillColor(Color::Green);
