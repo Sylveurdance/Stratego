@@ -36,7 +36,6 @@ namespace GUI {
 			void drawPieces();											//Draws the pieces on top of the board.
 			void updateGame();											//Updates the game
 			void drawMessage();											//Draws a message (win, lose)
-			bool highlighted(const Game::Position& position);			//Returns whether a position is highlighted
 
 		public:
 			GUI(int width, int height, Game::Board& board);

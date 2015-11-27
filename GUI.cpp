@@ -83,27 +83,15 @@ namespace GUI {
 			Piece* tempPiece = board.getPiece(tempPos);
 			if (selected) { // If we have already selected a piece, and click on the board again, the piece should move.
 				Piece* selectedPiece = board.getPiece(selection);
-				if(board.isCorrectMove(selection, tempPos)) {
-					board.movePiece(selection, tempPos);
-					selected = false;
-				}
-				else if (tempPiece) { // Prevent selecting of opponent pieces.
-					if (!tempPiece->getColor() && (board.getState() == REDPLAYS))
-						return;
-					else if (tempPiece->getColor() && (board.getState() == BLUEPLAYS))
-						return;
-					selection = tempPos;
-					selected = true;
-					highlights = board.moves(tempPos);
-				}
+				board.movePiece(selection, tempPos);
+				selected = false;
 			}
 			else if (tempPiece) { // If we haven't already selected a piece, then we should select it.
-				if (!tempPiece->getColor() && (board.getState() == REDPLAYS))
-					return;
-				else if (tempPiece->getColor() && (board.getState() == BLUEPLAYS))
-					return;
+				if (!tempPiece->getColor() && (board.getState() == REDPLAYS)) return;
+				else if (tempPiece->getColor() && (board.getState() == BLUEPLAYS)) return;
 				selection = tempPos;
 				selected = true;
+				highlights.clear();
 				highlights = board.moves(tempPos);
 			}
 		}
@@ -137,15 +125,16 @@ namespace GUI {
 		window->draw(field);
 
 		RectangleShape square(Vector2f(width / 10.f, height / 10.f));
-		square.setFillColor(Color(255, 255, 255, 50));
 		for (int x=0;x<10;x++) {
 			for (int y=0;y<10;y++) {
 				square.setPosition(x * width / 10.f, y * height / 10.f);
 
 				if (selected && selection == Position(x, 9-y))
 					square.setFillColor(Color::Yellow);
-				else if (selected && highlighted(Position(x, 9-y)))
+				else if (selected && this->board.isInMoveset(highlights, Position(x, 9-y)))
 					square.setFillColor(Color::Green);
+				else
+					square.setFillColor(Color(255, 255, 255, 50));
 
 				window->draw(square);
 			}
@@ -175,14 +164,5 @@ namespace GUI {
 				}
 			}
 		}
-	}
-
-	bool GUI::highlighted(const Position& position) {
-		for(int i=0; i<highlights.size();i++) {
-			if (highlights.at(i) == position)
-				return true;
-		}
-
-		return false;
 	}
 }

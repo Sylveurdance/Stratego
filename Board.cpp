@@ -23,14 +23,17 @@ namespace Game {
 		delete this->blueBox;
 	}
 
+	// Gets the state of the game
 	GameState Board::getState() const {
 		return state;
 	}
 
+	// Gets the piece which is currently on the position given
 	Piece* Board::getPiece(const Position& position) const {
 		return this->cases[position.x][position.y];
 	}
 
+	// Checks if a case is empty or not
 	bool Board::isCaseFree(const Position& position) const {
 		if(!this->getPiece(position)) {
 			return true;
@@ -38,12 +41,16 @@ namespace Game {
 		return false;
 	}
 
-	bool Board::isCorrectMove(const Position& from, const Position& to) const {
+	// Checks if the move is relatively correct (without taking in the moves the from piece can play)
+	bool Board::isCorrectRelativeMove(const Position& from, const Position& to) const {
 		if(!this->getPiece(from)) {
 			return false; // error case
 		}
 		if((!from.isValid()) || (!to.isValid())) {
 			return false; // Checks if the positions are not forbidden
+		}
+		if(from==to) {
+			return false; // cannot move to the same location
 		}
 		if(!this->getPiece(from)->isUnit()) {
 			return false; // If the piece in from position is not a unit, the move is not correct
@@ -59,6 +66,19 @@ namespace Game {
 		}
 	}
 
+	// Checks if the move is correct with checking on move set on from position
+	bool Board::isCorrectMove(const Position& from, const Position& to) const {
+		if(!this->isCorrectRelativeMove(from, to)) {
+			return false;
+		}
+		if(!this->isInMoveset(this->moves(from), to)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	// Put a Piece in a specific position on the field
 	void Board::putPiece(Piece* p, const Position& position, bool outBox) {
 		if(!p) { return; } // protect from errors
 		if(outBox) {
@@ -74,6 +94,7 @@ namespace Game {
 		p->move(position);
 	}
 
+	// Removes a piece from the game
 	void Board::removePiece(const Position& position, bool boxIn) {
 		if(!this->getPiece(position)) { return; } // protect from errors
 		if(boxIn) {
@@ -88,7 +109,7 @@ namespace Game {
 		this->cases[position.x][position.y] = NULL;
 	}
 
-	// Unit U attacks Piece P
+	// Battle between Unit U and the enemy piece
 	bool Board::battle(Piece* u, Piece* p) {
 		if((!p) || (!p) || (!u->isUnit())) {
 			return NULL; // Pieces NULL value or U not a Unit...
@@ -130,6 +151,7 @@ namespace Game {
 		return win;
 	}
 
+	// Moves a piece from a position to another and handles battle results eventually
 	void Board::movePiece(const Position& from, const Position& to) {
 		if(isCorrectMove(from, to)) {
 			if(isCaseFree(to)) {
@@ -157,6 +179,7 @@ namespace Game {
 		}
 	}
 
+	// Given a position in the field, it gets the piece on it and determines its possible moves
 	std::vector<Position> Board::moves(const Position& position) const {
 		std::vector<Position> possibleMoves;
 
@@ -170,32 +193,44 @@ namespace Game {
 		// Scout case
 		if(p->getValue()==SCOUT) {
 			for(int i=1+from.x;i<10;i++) { // go right
-				if(this->isCorrectMove(from, Position(i, from.y))) {
+				if(this->isCorrectRelativeMove(from, Position(i, from.y))) {
 					possibleMoves.push_back(Position(i, from.y));
+					if(!this->isCaseFree(Position(i, from.y))) {
+						break; // stop if the position contains something
+					}
 				}
 				else {
 					break;
 				}
 			}
 			for(int i=from.x-1;i>=0;i--) { // go left
-				if(this->isCorrectMove(from, Position(i, from.y))) {
+				if(this->isCorrectRelativeMove(from, Position(i, from.y))) {
 					possibleMoves.push_back(Position(i, from.y));
+					if(!this->isCaseFree(Position(i, from.y))) {
+						break; // stop if the position contains something
+					}
 				}
 				else {
 					break;
 				}
 			}
 			for(int i=1+from.y;i<10;i++) { // go up
-				if(this->isCorrectMove(from, Position(from.x, i))) {
+				if(this->isCorrectRelativeMove(from, Position(from.x, i))) {
 					possibleMoves.push_back(Position(from.x, i));
+					if(!this->isCaseFree(Position(from.x, i))) {
+						break; // stop if the position contains something
+					}
 				}
 				else {
 					break;
 				}
 			}
 			for(int i=from.y-1;i>=0;i--) { // go down
-				if(this->isCorrectMove(from, Position(from.x, i))) {
+				if(this->isCorrectRelativeMove(from, Position(from.x, i))) {
 					possibleMoves.push_back(Position(from.x, i));
+					if(!this->isCaseFree(Position(from.x, i))) {
+						break; // stop if the position contains something
+					}
 				}
 				else {
 					break;
@@ -204,19 +239,19 @@ namespace Game {
 		}
 		else { // normal case
 			Position toRight = Position(1+from.x, from.y);
-			if(this->isCorrectMove(from, toRight)) {
+			if(this->isCorrectRelativeMove(from, toRight)) {
 				possibleMoves.push_back(toRight);
 			}
 			Position toLeft = Position(from.x-1, from.y);
-			if(this->isCorrectMove(from, toLeft)) {
+			if(this->isCorrectRelativeMove(from, toLeft)) {
 				possibleMoves.push_back(toLeft);
 			}
 			Position toUp = Position(from.x, 1+from.y);
-			if(this->isCorrectMove(from, toUp)) {
+			if(this->isCorrectRelativeMove(from, toUp)) {
 				possibleMoves.push_back(toUp);
 			}
 			Position toDown = Position(from.x, from.y-1);
-			if(this->isCorrectMove(from, toDown)) {
+			if(this->isCorrectRelativeMove(from, toDown)) {
 				possibleMoves.push_back(toDown);
 			}
 		}
@@ -224,6 +259,16 @@ namespace Game {
 		return possibleMoves;
 	}
 
+	// Checks if the position to go is in part of the positions the piece in from position can play
+	bool Board::isInMoveset(std::vector<Position> possibleMoves, const Position& position) const {
+			for(int i=0; i<possibleMoves.size();i++) {
+				if (possibleMoves.at(i) == position)
+					return true;
+			}
+			return false;
+		}
+
+	// Checks if the current player can make a move or not with at least one of its units
 	bool Board::canPlayerPlay() {
 
 		for(int i=0;i<10;i++){
@@ -256,6 +301,7 @@ namespace Game {
 		return false;
 	}
 
+	// Fill (automatically) the board for a player (red or blue)
 	void Board::fillBoard(bool color) {
 
 		int yy;
