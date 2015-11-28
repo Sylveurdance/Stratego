@@ -17,6 +17,7 @@ namespace Game {
 			~Board();
 			GameState getState() const;
 			Piece* getPiece(const Position& position) const;
+			Box* getBoardBox(bool color) const;
 			bool isCaseFree(const Position& position) const;
 			bool isCorrectRelativeMove(const Position& from, const Position& to) const;
 			bool isCorrectMove(const Position& from, const Position& to) const;

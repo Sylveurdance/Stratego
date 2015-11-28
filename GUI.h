@@ -9,11 +9,13 @@ namespace GUI {
 	class GUI {
 
 		private:
-			int width, height;
 			Game::Board& board;
 			sf::RenderWindow* window;
 			sf::Font messageFont;
 			sf::Text messageText;
+
+			sf::View boxView;
+			sf::View gameView;
 
 			// Textures
 			std::vector<sf::Texture*> piecesTexture;
@@ -30,15 +32,17 @@ namespace GUI {
 			bool selected;
 			bool mousePressed;
 
-			std::vector<Game::Position> highlights;						//Contains all the positions that are highlighted
+			std::vector<Game::Position> highlights;
 
-			void drawBoard();											//Draws the board
-			void drawPieces();											//Draws the pieces on top of the board.
-			void updateGame();											//Updates the game
-			void drawMessage();											//Draws a message (win, lose)
+			void drawBoard();
+			void drawPieces();
+			void drawBox(bool color);
+			void updateGame();
+			void updateBox();
+			void drawMessage();
 
 		public:
-			GUI(int width, int height, Game::Board& board);
+			GUI(Game::Board& board);
 			~GUI();
 			bool isOpen() const;
 			void update();

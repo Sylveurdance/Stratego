@@ -28,6 +28,12 @@ namespace Game {
 		return state;
 	}
 
+	//Gets red or blue box
+	Box* Board::getBoardBox(bool color) const {
+		if(color) return this->redBox;
+		else return this->blueBox;
+	}
+
 	// Gets the piece which is currently on the position given
 	Piece* Board::getPiece(const Position& position) const {
 		return this->cases[position.x][position.y];

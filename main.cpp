@@ -10,7 +10,7 @@ int main() {
 	board.fillBoard(RED);
 	board.fillBoard(BLUE);
 
-	GUI::GUI gui(572, 572, board);
+	GUI::GUI gui(board);
 
 	while (gui.isOpen()) {
 		gui.update();
