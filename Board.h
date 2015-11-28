@@ -7,10 +7,11 @@ namespace Game {
 
 	class Board {
 		private:
-			GameState state; 		// Gives the game status (someone turn, or end of game?)
-			Piece* cases[10][10]; 	// Represents the field
-			Box* redBox;
-			Box* blueBox;
+			GameState state; 					// Gives the game status (someone turn, or end of game?)
+			Piece* cases[10][10]; 				// Represents the field
+			Box* redBox;						// Represents the red Box
+			Box* blueBox;						// Represents the blue Box
+			std::vector<Piece*> discovered; 	// Represents all pieces discovered by the enemy (contains both colors)
 		public:
 			Board();
 			~Board();
@@ -26,6 +27,7 @@ namespace Game {
 			std::vector<Position> moves(const Position& position) const;
 			bool canPlayerPlay();
 			bool isInMoveset(std::vector<Position> possibleMoves, const Position& position) const;
+			bool isPieceDiscovered(Piece* p, bool enemyColor) const;
 			void fillBoard(bool color);
 
 	};

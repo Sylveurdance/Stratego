@@ -147,19 +147,21 @@ namespace GUI {
 				Piece* piece = board.getPiece(Position(x,9-y));
 				if (piece) {
 					piecesSprite.at(piece->getValue()).setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
-					if(piece->getColor()) {
+					if(piece->getColor()) { // red piece
 						piece_rouge.setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
 						window->draw(piece_rouge);
-						if (board.getState() == REDPLAYS) {
-							window->draw(piecesSprite.at(piece->getValue()));
-						}
 					}
-					else {
+					else { // blue piece
 						piece_bleu.setPosition(Vector2f(x*width/10.f,(y-0.2f)*width/10.f));
 						window->draw(piece_bleu);
-						if (board.getState() == BLUEPLAYS) {
-							window->draw(piecesSprite.at(piece->getValue()));
-						}
+					}
+					// if red turns (and red piece) or blue piece discovered
+					if(((piece->getColor()) && ((board.getState() == REDPLAYS))) || (board.isPieceDiscovered(piece, BLUE))) {
+						window->draw(piecesSprite.at(piece->getValue()));
+					}
+					// if blue turn (and blue piece) or red piece discovered
+					if(((!piece->getColor()) && ((board.getState() == BLUEPLAYS))) || (board.isPieceDiscovered(piece, RED))) {
+						window->draw(piecesSprite.at(piece->getValue()));
 					}
 				}
 			}

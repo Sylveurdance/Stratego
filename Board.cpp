@@ -98,13 +98,25 @@ namespace Game {
 	void Board::removePiece(const Position& position, bool boxIn) {
 		if(!this->getPiece(position)) { return; } // protect from errors
 		if(boxIn) {
+			// put the piece into the box
 			if(this->getPiece(position)->getColor()) { // Red piece
 				this->redBox->putInBox(this->getPiece(position));
 			}
 			else { // Blue piece
 				this->blueBox->putInBox(this->getPiece(position));
 			}
+
+			// clean the discovered list when the piece is removed
+			if(!this->discovered.empty()) {
+				for (int i=0;i< this->discovered.size();i++) {
+					if(this->discovered.at(i)->getId() == this->getPiece(position)->getId()) {
+						this->discovered.erase(this->discovered.begin()+i);
+					}
+				}
+			}
 		}
+
+
 
 		this->cases[position.x][position.y] = NULL;
 	}
@@ -164,9 +176,13 @@ namespace Game {
 					this->removePiece(to, true); // piece eliminated
 					this->putPiece(this->getPiece(from), to);
 					this->removePiece(from);
+					this->discovered.push_back(this->getPiece(to)); // add the winning piece into discovered
 				}
 				else {
 					this->removePiece(from, true); // piece eliminated
+					if(this->getPiece(to)) { // if enemy piece won (not a draw)
+						this->discovered.push_back(this->getPiece(to));
+					}
 				}
 			}
 			// Change turn
@@ -261,12 +277,24 @@ namespace Game {
 
 	// Checks if the position to go is in part of the positions the piece in from position can play
 	bool Board::isInMoveset(std::vector<Position> possibleMoves, const Position& position) const {
-			for(int i=0; i<possibleMoves.size();i++) {
-				if (possibleMoves.at(i) == position)
-					return true;
-			}
-			return false;
+		for(int i=0; i<possibleMoves.size();i++) {
+			if (possibleMoves.at(i) == position)
+				return true;
 		}
+		return false;
+	}
+
+	// Checks if a piece is discovered by the enemy
+	bool Board::isPieceDiscovered(Piece* p, bool enemyColor) const {
+
+		if(!p) return false;
+
+		for(int i=0; i<discovered.size();i++) {
+			if ((discovered.at(i) == p) && (p->getColor() == enemyColor))
+				return true;
+		}
+		return false;
+	}
 
 	// Checks if the current player can make a move or not with at least one of its units
 	bool Board::canPlayerPlay() {
