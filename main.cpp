@@ -7,8 +7,8 @@ using namespace Game;
 int main() {
 
 	Board board = Board();
-	board.fillBoard(RED);
-	board.fillBoard(BLUE);
+	//board.fillBoard(RED);
+	//board.fillBoard(BLUE);
 
 	GUI::GUI gui(board);
 

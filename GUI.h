@@ -29,8 +29,11 @@ namespace GUI {
 			sf::Sprite piece_bleu;
 
 			Game::Position selection;
+			bool boxSelected;
 			bool selected;
 			bool mousePressed;
+
+			bool play;
 
 			std::vector<Game::Position> highlights;
 

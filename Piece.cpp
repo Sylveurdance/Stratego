@@ -60,4 +60,9 @@ namespace Game {
 		}
 	}
 
+	// set a position, not to use in game, only for the box
+	void Piece::setPosition(const Position& newPosition) {
+			this->position = newPosition;
+	}
+
 }

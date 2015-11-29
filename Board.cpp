@@ -97,7 +97,7 @@ namespace Game {
 		}
 
 		this->cases[position.x][position.y] = p;
-		p->move(position);
+		p->setPosition(position);
 	}
 
 	// Removes a piece from the game
@@ -121,8 +121,6 @@ namespace Game {
 				}
 			}
 		}
-
-
 
 		this->cases[position.x][position.y] = NULL;
 	}

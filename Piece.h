@@ -26,6 +26,7 @@ namespace Game {
 			Position getPosition() const;
 			bool isUnit() const;
 			void move(const Position& position); // only for Units
+			void setPosition(const Position& newPosition);
 
 	};
 }

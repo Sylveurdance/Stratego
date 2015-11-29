@@ -54,6 +54,21 @@ namespace Game {
 			this->pieces->push_back(new Piece(color, idPiece, MARSHAL, "Marshal"));
 			idPiece++;
 		}
+
+		// Set positions for the box
+		int x = 0;
+		int y = 0;
+		if(!color) y = 9;
+		for (int i=0;i<this->pieces->size();i++) {
+			this->pieces->at(i)->setPosition(Position(x,y));
+			// simulation of for x,y...
+			x++;
+			if(x==10) {
+				x=0;
+				if(!color) y--;
+				else y++;
+			}
+		}
 	}
 
 	Box::~Box() {
