@@ -33,13 +33,16 @@ namespace GUI {
 			bool selected;
 			bool mousePressed;
 
+			Game::Piece* boxPiece;
+
 			bool play;
 
 			std::vector<Game::Position> highlights;
 
 			void drawBoard();
 			void drawPieces();
-			void drawBox(bool color);
+			void drawBoxInBox(bool color);
+			void drawBoxInGame(bool color);
 			void updateGame();
 			void updateBox();
 			void drawMessage();

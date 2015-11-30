@@ -10,18 +10,16 @@ namespace Game {
 			int x;
 			int y;
 
-			// Create new position (x, y)
 			Position();
 			Position(int x, int y);
 
-			// Check if position is within bounds.
+
 			bool isValid() const;
+			bool isStartValid(bool color) const;
 	};
 
-	// Overloaded == for Position.
-	bool operator==(const Position& lhs, const Position& rhs);
 
-	// Overloaded != for Position.
+	bool operator==(const Position& lhs, const Position& rhs);
 	bool operator!=(const Position& lhs, const Position& rhs);
 }
 

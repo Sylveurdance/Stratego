@@ -28,6 +28,16 @@ namespace Game {
 		return state;
 	}
 
+	// Gets the state of the game
+	void Board::setState(bool color) {
+		if(color) {
+			this->state = REDPLAYS;
+		}
+		else {
+			this->state = BLUEPLAYS;
+		}
+	}
+
 	//Gets red or blue box
 	Box* Board::getBoardBox(bool color) const {
 		if(color) return this->redBox;
@@ -88,6 +98,7 @@ namespace Game {
 	void Board::putPiece(Piece* p, const Position& position, bool outBox) {
 		if(!p) { return; } // protect from errors
 		if(outBox) {
+			if(!position.isStartValid(p->getColor())) { return; }
 			if(p->getColor()) { // Red
 				this->redBox->takeOutOfBox(p->getId());
 			}

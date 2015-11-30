@@ -12,6 +12,7 @@ namespace GUI {
 		this->mousePressed = false;
 
 		this->play = false; // play = true when playing, false when filling the board
+		this->boxPiece = NULL; // boxPiece selected to be put in the field
 
 		// Text used to display messages (draw, win)
 		messageFont.loadFromFile("polices/angelina.ttf");
@@ -90,10 +91,12 @@ namespace GUI {
 			if(board.getBoardBox(BLUE)->getBox()->empty()) {
 				play = true;
 				mousePressed = false;
+				board.setState(RED);
 				return;
 			}
 			else {
 				color = BLUE; // when RED player is finished, it's at blue player to fill its board
+				board.setState(color);
 			}
 		}
 
@@ -105,40 +108,16 @@ namespace GUI {
 			Position tempPosTo(mousePosTo.x * 10 / this->boxView.getSize().x, mousePosTo.y * 10 / this->boxView.getSize().y);
 			tempPosFrom.y = 9 - tempPosFrom.y; // SFML reverse repere in Y
 			tempPosTo.y = 9 - tempPosTo.y; // SFML reverse repere in Y
-			Piece* tempPiece;
-
-			//TODO understand pointers things that make errors !!!
 
 			if(boxSelected) {
-				std::cout << "Color ";
-				std::cout << tempPiece->getColor() << std::endl;
-				std::cout << "Id ";
-				std::cout << tempPiece->getId() << std::endl;
-				std::cout << "Value ";
-				std::cout << tempPiece->getValue() << std::endl;
-				std::cout << "Position";
-				std::cout << tempPiece->getPosition().x;
-				std::cout << " ";
-				std::cout << tempPiece->getPosition().y << std::endl;
-
-				board.putPiece(tempPiece, tempPosTo, true);
+				board.putPiece(boxPiece,tempPosTo,true);
 				boxSelected = false;
 
-				std::cout << "Color ";
-				std::cout << board.getPiece(tempPiece->getPosition())->getColor() << std::endl;
-				std::cout << "Id ";
-				std::cout << board.getPiece(tempPiece->getPosition())->getId() << std::endl;
-				std::cout << "Value ";
-				std::cout << board.getPiece(tempPiece->getPosition())->getValue() << std::endl;
-				std::cout << "Position";
-				std::cout << board.getPiece(tempPiece->getPosition())->getPosition().x;
-				std::cout << " ";
-				std::cout << board.getPiece(tempPiece->getPosition())->getPosition().y << std::endl;
 			}
 			else {
 				for(int i=0;i<board.getBoardBox(color)->getBox()->size();i++) {
 					if(board.getBoardBox(color)->getBox()->at(i)->getPosition() == tempPosFrom) {
-						tempPiece = board.getBoardBox(color)->getBox()->at(i);
+						boxPiece = board.getBoardBox(color)->getBox()->at(i);
 						boxSelected = true;
 						break;
 					}
@@ -181,8 +160,14 @@ namespace GUI {
 		window->setView(window->getDefaultView());
 		if(play) drawMessage();
 		window->setView(boxView);
-		drawBox(RED);
-		drawBox(BLUE);
+		if(!play) {
+			drawBoxInBox(RED);
+			drawBoxInBox(BLUE);
+		}
+		else {
+			drawBoxInGame(RED);
+			drawBoxInGame(BLUE);
+		}
 		window->setView(gameView);
 		if ((board.getState() == REDPLAYS || board.getState() == BLUEPLAYS)) {
 			drawBoard();
@@ -253,9 +238,26 @@ namespace GUI {
 		}
 	}
 
+	// Draws the box before the game
+	void GUI::drawBoxInBox(bool color) {
+		for(int i=0;i<board.getBoardBox(color)->getBox()->size();i++) {
+			Vector2f Position = Vector2f(board.getBoardBox(color)->getBox()->at(i)->getPosition().x*this->boxView.getSize().x/10.f,(9-board.getBoardBox(color)->getBox()->at(i)->getPosition().y-0.2f)*this->boxView.getSize().y/10.f);
 
-	// Draws the box
-	void GUI::drawBox(bool color) {
+			if(color) {
+				piece_rouge.setPosition(Position);
+				window->draw(piece_rouge);
+			}
+			else {
+				piece_bleu.setPosition(Position);
+				window->draw(piece_bleu);
+			}
+			piecesSprite.at(board.getBoardBox(color)->getBox()->at(i)->getValue()).setPosition(Position);
+			window->draw(piecesSprite.at(board.getBoardBox(color)->getBox()->at(i)->getValue()));
+		}
+	}
+
+	// Draws the box during the game
+	void GUI::drawBoxInGame(bool color) {
 		int x = 0;
 		int y = 0;
 		if(color) y = 9;
