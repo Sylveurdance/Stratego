@@ -164,7 +164,7 @@ namespace GUI {
 			drawBoxInBox(RED);
 			drawBoxInBox(BLUE);
 		}
-		else {
+		else if ((board.getState() == REDPLAYS || board.getState() == BLUEPLAYS)) {
 			drawBoxInGame(RED);
 			drawBoxInGame(BLUE);
 		}
@@ -238,7 +238,7 @@ namespace GUI {
 		}
 	}
 
-	// Draws the box before the game
+	// Draws the box before the game (use initial pieces positions)
 	void GUI::drawBoxInBox(bool color) {
 		for(int i=0;i<board.getBoardBox(color)->getBox()->size();i++) {
 			Vector2f Position = Vector2f(board.getBoardBox(color)->getBox()->at(i)->getPosition().x*this->boxView.getSize().x/10.f,(9-board.getBoardBox(color)->getBox()->at(i)->getPosition().y-0.2f)*this->boxView.getSize().y/10.f);
@@ -256,7 +256,7 @@ namespace GUI {
 		}
 	}
 
-	// Draws the box during the game
+	// Draws the box during the game (use x,y positions by iterate)
 	void GUI::drawBoxInGame(bool color) {
 		int x = 0;
 		int y = 0;

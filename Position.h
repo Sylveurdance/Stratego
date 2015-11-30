@@ -13,7 +13,6 @@ namespace Game {
 			Position();
 			Position(int x, int y);
 
-
 			bool isValid() const;
 			bool isStartValid(bool color) const;
 	};
